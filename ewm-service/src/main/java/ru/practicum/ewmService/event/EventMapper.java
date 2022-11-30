@@ -16,7 +16,7 @@ public class EventMapper {
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
                 .eventDate(event.getEventDate())
-                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .initiator(new EventShortDto().new User(event.getInitiator().getId(), event.getInitiator().getName()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
                 .views(event.getViews())

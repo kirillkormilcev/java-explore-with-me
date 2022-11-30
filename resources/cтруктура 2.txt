@@ -1,0 +1,121 @@
+└───ewmService
+    │   ExploreWithMeEwmService.java 					- класс запуска модуля
+    │
+    ├───error											- пакет обработка ошибок
+    │   │   ErrorHandler.java								- класс обработки ошибок
+    │   │   ErrorResponse.java								- класс представления ответа ошибок
+    │   │
+    │   └───exception									- пакет исключений
+    │           CategoryValidationException.java			- классы исключений
+    │           CompilationValidationException.java			...
+    │           EventValidationException.java
+    │           RequestValidationException.java
+    │           UserValidationException.java
+    │
+    ├───event											- пакет событий
+    │   │   EventMapper.java								- маппер событий
+    │   │   EventRepository.java							- репозиторий событий
+    │   │
+    │   ├───access										- пакет доступов
+    │   │   │   EventController.java						- контроллер событий общего доступа
+    │   │   │   EventService.java							- сервис событий общего доступа
+    │   │   │
+    │   │   ├───admin									- пакет доступа администратора
+    │   │   │       EventController.java					- контроллер событий административного доступа
+    │   │   │       EventService.java						- сервис событий административного доступа
+    │   │   │
+    │   │   └───user									- пакет доступа пользователя
+    │   │           EventController.java					- контроллер событий пользовательского доступа
+    │   │           EventService.java						- сервис событий пользовательского доступа
+    │   │
+    │   ├───category									- пакет категорий событий
+    │   │   │   CategoryMapper.java							- маппер категорий
+    │   │   │   CategoryRepository.java						- репозиторий категорий
+    │   │   │
+    │   │   ├───access									- пакет доступов
+    │   │   │   │   CategoryController.java					- контроллер категорий общего доступа
+    │   │   │   │   CategoryService.java					- сервис категорий общего доступа
+    │   │   │   │
+    │   │   │   └───admin								- пакет административного доступа
+    │   │   │           CategoryController.java				- контроллер категорий административного доступа
+    │   │   │           CategoryService.java				- сервис категорий административного доступа
+    │   │   │
+    │   │   ├───dto										- пакет дто категорий
+    │   │   └───model									- пакет модели категорий
+    │   │           Category.java							- модель категории
+    │   │
+    │   ├───compilation									- пакет подборок событий
+    │   │   │   CompilationMapper.java						- маппер подборок
+    │   │   │   CompilationRepository.java					- репозиторий подборок
+    │   │   │
+    │   │   ├───access									- пакет доступов
+    │   │   │   ├───admin								- пакет административного доступа
+    │   │   │   │       CompilationController.java			- контроллер подборок административного доступа
+    │   │   │   │       CompilationService.java				- сервис подборок административного доступа
+    │   │   │   │
+    │   │   │   └───user								- пакет пользовательского доступа
+    │   │   │           CompilationController.java			- контроллер подборок пользовательского доступа
+    │   │   │           CompilationService.java				- сервис подборок пользовательского доступа
+    │   │   │
+    │   │   ├───dto										- пакет дто подборок
+    │   │   └───model									- пакет модели подборки
+    │   │           Compilation.java						- модель подборки
+    │   │
+    │   ├───dto											- пакет дто событий
+    │   └───model										- пакет моделей события
+    │           Event.java									- модель события
+    │           State.java									- модель статуса события
+    │
+    ├───request											- пакет запроса
+    │   │   RequestMapper.java								- маппер запросов
+    │   │   RequestRepository.java							- репозиторий запросов
+    │   │
+    │   ├───access										- пакет доступов
+    │   │   └───user									- пакет пользовательского доступа
+    │   │           EventRequestController.java				- контроллер запросов события
+    │   │           EventRequestService.java				- сервис запросов события
+    │   │           RequestController.java					- контроллер запросов
+    │   │           RequestService.java						- сервис запросов
+    │   │
+    │   ├───dto											- пакет дто запросов
+    │   └───model										- пакет модели запроса
+    │           Request.java								- модель запроса
+    │
+    ├───stats											- пакет статистики
+    │   │   StatsClient.java								- клиент статистики (RestTemplate)
+    │   │
+    │   └───client										- пакет клиента
+    │           BaseClient.java								- базовый клиент
+    │
+    └───user											- пакет пользователя
+        │   UserMapper.java									- маппер пользователя
+        │   UserRepository.java								- репозиторий пользователей
+        │
+        ├───access										- пакет доступов
+        │   └───admin									- пакет административного доступа
+        │           UserController.java						- контроллер пользователей административного доступа
+		│           UserService.java						- сервис пользователей административного доступа
+        │
+        ├───dto											- пакет дто пользователей
+        └───model										- пакет модели пользователя
+                User.java									- модель пользователя
+				
+└───statsServer											
+    │   ExploreWithMeStatsServer.java						- класс запуска модуля
+    │
+    ├───EndpointHit										- пакет записи обращения к эндпоинту
+    │   │   EndpointHitController.java						- контроллер записей обращений к эндпоинтам
+    │   │   EndpointHitMapper.java							- маппер записей обращений к эндпоинтам
+    │   │   EndpointHitRepository.java						- репозиторий записей обращений к эндпоинтам
+    │   │   EndpointHitService.java							- сервис записей обращений к эндпоинтам
+    │   │
+    │   ├───dto											- пакет дто обращений к эндпоинту
+    │   └───model										- пакет модели обращения к эндпоинту
+    │           EndpointHit.java							- модель обращения к эндпоинту
+    │
+    └───error											- пакет обработка ошибок
+        │   ErrorHandler.java								- класс обработки ошибок
+        │   ErrorResponse.java								- класс представления ответа ошибок
+        │
+        └───exception									- пакет исключений
+                EndpointHitValidationException.java			- класс исключения

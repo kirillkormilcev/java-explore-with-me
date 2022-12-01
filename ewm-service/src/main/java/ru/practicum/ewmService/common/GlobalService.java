@@ -2,8 +2,6 @@ package ru.practicum.ewmService.common;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewmService.common.model.specification.SearchCriteria;
-import ru.practicum.ewmService.common.model.specification.SearchOperation;
 import ru.practicum.ewmService.common.stats.CommonStatsClient;
 import ru.practicum.ewmService.common.stats.MyFeignClient;
 import ru.practicum.ewmService.error.exception.IncorrectRequestParamException;
@@ -15,15 +13,12 @@ import ru.practicum.ewmService.event.category.CategoryRepository;
 import ru.practicum.ewmService.event.category.model.Category;
 import ru.practicum.ewmService.event.model.Event;
 import ru.practicum.ewmService.event.model.State;
-import ru.practicum.ewmService.event.model.repository.EventParameters;
-import ru.practicum.ewmService.event.model.repository.EventSpecification;
 import ru.practicum.ewmService.request.RequestRepository;
 import ru.practicum.ewmService.request.model.Request;
 import ru.practicum.ewmService.user.UserRepository;
 import ru.practicum.ewmService.user.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class GlobalService extends CommonStatsClient {
@@ -114,25 +109,6 @@ public class GlobalService extends CommonStatsClient {
         if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
             throw new IncorrectRequestParamException("Запрос пользователя с индексом " + userId + " к событию с иднексом "
                     + eventId + " уже создан.");
-        }
-    }
-
-    protected void setStartAndEndRangesInSpecification(EventParameters ep, EventSpecification es) {
-        LocalDateTime rangeStart;
-        if (ep.getRangeStartText() != null) {
-            rangeStart = LocalDateTime.parse(ep.getRangeStartText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            es.add(new SearchCriteria("eventDate", rangeStart, SearchOperation.AFTER));
-        } else {
-            rangeStart = LocalDateTime.now();
-            es.add(new SearchCriteria("eventDate", rangeStart, SearchOperation.AFTER));
-        }
-        LocalDateTime rangeEnd;
-        if (ep.getRangeEndText() != null) {
-            rangeEnd = LocalDateTime.parse(ep.getRangeEndText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            es.add(new SearchCriteria("eventDate", rangeEnd, SearchOperation.BEFORE));
-        } else {
-            rangeEnd = LocalDateTime.now().plusYears(100);
-            es.add(new SearchCriteria("eventDate", rangeEnd, SearchOperation.BEFORE));
         }
     }
 

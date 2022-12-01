@@ -1,6 +1,7 @@
 package ru.practicum.ewmService.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewmService.event.category.dto.CategoryDto;
@@ -9,14 +10,16 @@ import ru.practicum.ewmService.event.model.State;
 import ru.practicum.ewmService.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventFullDto {
     long id;
     String annotation;
@@ -37,4 +40,15 @@ public class EventFullDto {
     State state;
     String title;
     long views;
+    Set<Place> places;
+
+    @Getter
+    @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PUBLIC)
+    @NoArgsConstructor(access = AccessLevel.PUBLIC)
+    @ToString
+    public class Place {
+        String name;
+    }
 }

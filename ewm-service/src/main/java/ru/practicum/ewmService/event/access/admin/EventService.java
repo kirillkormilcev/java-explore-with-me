@@ -1,13 +1,8 @@
 package ru.practicum.ewmService.event.access.admin;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmService.common.GlobalService;
-import ru.practicum.ewmService.common.PageRequestModified;
-import ru.practicum.ewmService.common.model.specification.SearchCriteria;
-import ru.practicum.ewmService.common.model.specification.SearchOperation;
 import ru.practicum.ewmService.common.stats.MyFeignClient;
 import ru.practicum.ewmService.error.exception.IncorrectRequestParamException;
 import ru.practicum.ewmService.event.EventMapper;
@@ -18,41 +13,69 @@ import ru.practicum.ewmService.event.dto.EventFullDto;
 import ru.practicum.ewmService.event.model.Event;
 import ru.practicum.ewmService.event.model.State;
 import ru.practicum.ewmService.event.model.repository.EventParameters;
-import ru.practicum.ewmService.event.model.repository.EventSpecification;
 import ru.practicum.ewmService.request.RequestRepository;
 import ru.practicum.ewmService.user.UserRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("AdminEventService")
 @Transactional(readOnly = true)
 public class EventService extends GlobalService {
+    private final EntityManager em;
 
     public EventService(MyFeignClient feignClient,
                         EventRepository eventRepository,
                         UserRepository userRepository,
                         CategoryRepository categoryRepository,
-                        RequestRepository requestRepository) {
+                        RequestRepository requestRepository,
+                        EntityManager em) {
         super(feignClient, eventRepository, userRepository, categoryRepository, requestRepository);
+        this.em = em;
     }
 
     public List<EventFullDto> getEvents(EventParameters ep) {
-        EventSpecification es = new EventSpecification();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Event> cq = cb.createQuery(Event.class);
+        Root<Event> event = cq.from(Event.class);
+        List<Predicate> predicates = new ArrayList<>();
         if (!ep.getUsers().isEmpty() && ep.getUsers() != null) {
-            es.add(new SearchCriteria("initiator", userRepository.findAllByIdIn(ep.getUsers()), SearchOperation.IN));
+            predicates.add(cb.in(event.get("initiator").get("id")).value(ep.getUsers()));
         }
         if (ep.getStates() != null) {
-            es.add(new SearchCriteria("state", ep.getStates(), SearchOperation.IN));
+            predicates.add(cb.in(event.get("state")).value(ep.getStates()));
         }
         if (!ep.getCategories().isEmpty() && ep.getCategories() != null) {
-            es.add(new SearchCriteria("category", categoryRepository.findAllByIdIn(ep.getCategories()), SearchOperation.IN));
+            predicates.add(cb.in(event.get("category").get("id")).value(ep.getCategories()));
         }
-        setStartAndEndRangesInSpecification(ep, es);
-        PageRequest pageRequest = new PageRequestModified(ep.getFrom(), ep.getSize(), Sort.by("eventDate"));
-        return eventRepository.findAll(es, pageRequest)
-                .stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
+        LocalDateTime rangeStart;
+        if (ep.getRangeStartText() != null) {
+            rangeStart = LocalDateTime.parse(ep.getRangeStartText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        } else {
+            rangeStart = LocalDateTime.now();
+        }
+        predicates.add(cb.greaterThanOrEqualTo(event.get("eventDate"), rangeStart));
+        LocalDateTime rangeEnd;
+        if (ep.getRangeEndText() != null) {
+            rangeEnd = LocalDateTime.parse(ep.getRangeEndText(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        } else {
+            rangeEnd = LocalDateTime.now().plusYears(100);
+        }
+        predicates.add(cb.lessThanOrEqualTo(event.get("eventDate"), rangeEnd));
+        cq.orderBy(cb.asc(event.get("eventDate")));
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Event> tq = em.createQuery(cq);
+        List<Event> events = tq.setFirstResult(ep.getFrom()).setMaxResults(ep.getSize()).getResultList();
+        return events.stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     @Transactional

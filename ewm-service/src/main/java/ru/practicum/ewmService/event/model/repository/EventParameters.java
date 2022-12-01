@@ -20,6 +20,7 @@ public class EventParameters {
     String rangeStartText;
     String rangeEndText;
     String onlyAvailable;
+    String place;
     String sort;
     Integer from;
     Integer size;

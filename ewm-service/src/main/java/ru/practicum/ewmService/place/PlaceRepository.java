@@ -16,13 +16,13 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     List<Place> findAllByName(String name);
 
     @Query("select p from Place p " +
-            "where upper(p.placeType) like upper(concat('%', ?1, '%')) " +
+            "where upper(p.placeType.name) like upper(concat('%', ?1, '%')) " +
             "and p.available is true")
     List<Place> findAllByPlaceTypes(String placeTypes);
 
     @Query("select p from Place p " +
             "where upper(p.name) like upper(concat('%', ?1, '%')) " +
-            "and upper(p.placeType) like upper(concat('%', ?1, '%')) " +
+            "and upper(p.placeType.name) like upper(concat('%', ?2, '%')) " +
             "and p.available is true")
     List<Place> findAllByNameAndPlaceType(String name, String placeTypes);
 }

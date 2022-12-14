@@ -7,6 +7,8 @@ import ru.practicum.ewmService.event.model.Event;
 import ru.practicum.ewmService.user.UserMapper;
 import ru.practicum.ewmService.user.model.User;
 
+import java.util.stream.Collectors;
+
 public class EventMapper {
 
     public static EventShortDto toEventShortDto(Event event) {
@@ -41,6 +43,9 @@ public class EventMapper {
                 .state(event.getState())
                 .title(event.getTitle())
                 .views(event.getViews())
+                .places(event.getPlaces() != null ? event.getPlaces()
+                        .stream().map(place -> new EventFullDto().new Place(place.getName()))
+                        .collect(Collectors.toSet()) : null)
                 .build();
     }
 

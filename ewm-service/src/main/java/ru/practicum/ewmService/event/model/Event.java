@@ -4,11 +4,13 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewmService.event.category.model.Category;
 import ru.practicum.ewmService.event.location.model.Location;
+import ru.practicum.ewmService.place.model.Place;
 import ru.practicum.ewmService.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -53,4 +55,8 @@ public class Event {
     long views;
     @Builder.Default
     Boolean available = true;
+    @ManyToMany(cascade = CascadeType.ALL)
+    Set<Place> places;
+    @Column(length = 1024, name = "place_names")
+    String placeNames;
 }

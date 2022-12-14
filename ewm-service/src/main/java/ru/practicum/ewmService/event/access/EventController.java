@@ -40,13 +40,14 @@ public class EventController extends CommonStatsClient {
             @RequestParam(name = "rangeStart", required = false) String rangeStart,
             @RequestParam(name = "rangeEnd", required = false) String rangeEnd,
             @RequestParam(name = "onlyAvailable", required = false, defaultValue = "false") String onlyAvailable,
+            @RequestParam(name = "place", required = false) String place,
             @RequestParam(name = "sort", required = false, defaultValue = "EVENT_DATE") String sort,
             @PositiveOrZero @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
             HttpServletRequest request) {
         log.info("Обработка эндпойнта GET/events?text=" + text + "&categories=" + categories + "&paid=" + paid +
-                "&rangeStart=" + rangeStart + "&rangeEnd=" + rangeEnd + "&onlyAvailable=" + onlyAvailable + "&sort=" +
-                sort + "&from=" + from + "size=" + size + ".");
+                "&rangeStart=" + rangeStart + "&rangeEnd=" + rangeEnd + "&onlyAvailable=" + onlyAvailable + "&place=" +
+                place + "&sort=" + sort + "&from=" + from + "size=" + size + ".");
         sendStats(request);
         EventParameters eventParameters = EventParameters.builder()
                 .text(text)
@@ -55,6 +56,7 @@ public class EventController extends CommonStatsClient {
                 .rangeStartText(rangeStart)
                 .rangeEndText(rangeEnd)
                 .onlyAvailable(onlyAvailable)
+                .place(place)
                 .sort(sort)
                 .from(from)
                 .size(size)
@@ -69,5 +71,14 @@ public class EventController extends CommonStatsClient {
         log.info("Обработка эндпойнта GET/events/" + eventId + ".");
         sendStats(request);
         return new ResponseEntity<>(eventService.getEventById(eventId), HttpStatus.OK);
+    }
+
+    @GetMapping("/places/{placeId}")
+    public ResponseEntity<List<EventShortDto>> getEventsInPlace(
+            @PathVariable long placeId,
+            HttpServletRequest request) {
+        log.info("Обработка эндпойнта GET/events/places/" + placeId + ".");
+        sendStats(request);
+        return new ResponseEntity<>(eventService.getEventsByPlaceId(placeId), HttpStatus.OK);
     }
 }

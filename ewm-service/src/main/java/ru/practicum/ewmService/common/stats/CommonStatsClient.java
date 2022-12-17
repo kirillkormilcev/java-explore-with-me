@@ -58,7 +58,7 @@ public class CommonStatsClient {
         }
         for (ViewStatsDto view: views) {
             String uri = view.getUri();
-            System.out.println(uri);
+            //System.out.println(uri);
             long eventId = Long.parseLong(uri.substring(uri.lastIndexOf("/") + 1));
             Event event = eventsMap.get(eventId);
             event.setViews(view.getHits());
